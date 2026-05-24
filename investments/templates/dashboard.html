@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="tr">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinTech | Yatırım Komuta Merkezi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .card { border: none; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: 0.3s; }
+        .card:hover { transform: translateY(-5px); }
+        .header-section { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; padding: 40px 0; border-radius: 0 0 30px 30px; margin-bottom: 30px; }
+        .table-container { background: white; padding: 25px; border-radius: 20px; }
+        .badge-asset { font-size: 0.85rem; padding: 5px 12px; border-radius: 8px; }
+        .text-profit { color: #2ecc71; font-weight: bold; }
+        .text-loss { color: #e74c3c; font-weight: bold; }
+    </style>
+</head>
+
+<body>
+
+{% load humanize %}
+
+<div class="header-section text-center"
+    style="background: #023047;">
+
+    <div class="container">        
+            <h1 class="display-5 fw-bold">Yatırım Komuta Merkezi</h1>
+    </div>
+
+    <div class="container mb-5">
+        <div class="row g-3 mb-4 row-cols-1 row-cols-md-5">
+
+            <div class="col">
+                <div class="card stat-card p-3 border-0 shadow-sm text-dark"
+                     style="background: #A6DBE3;">
+                    <small class="text-muted fw-bold">MALİYET</small>
+                    <h4 class="fw-bold mb-0">
+                        {{ total_maliyet|floatformat:2|intcomma }} ₺
+                    </h4>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card stat-card p-3 border-0 shadow-sm bg-light">
+                    <small class="text-muted fw-bold">REEL MALİYET</small>
+                    <h4 class="fw-bold mb-0">
+                        {{ total_reel_maliyet|floatformat:2|intcomma }} ₺
+                    </h4>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card stat-card p-3 border-0 shadow-sm text-white"
+                    style="background: #DE7C82;">
+                    <small class="fw-bold opacity-75">ENFLASYON FARKI</small>
+                    <h4 class="fw-bold mb-0">
+                        {{ total_kalkan|floatformat:2|intcomma }} ₺
+                    </h4>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card stat-card p-3 border-0 shadow-sm bg-warning text-dark">
+                    <small class="fw-bold opacity-75">KÂR/ZARAR</small>
+                    <h4 class="fw-bold mb-0">
+                        {{ total_kar_zarar|floatformat:2|intcomma }} ₺
+                    </h4>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card stat-card p-3 border-0 shadow-sm text-white"
+                     style="background: #B651AD;">
+                    <small class="fw-bold opacity-75">REEL GETİRİ</small>
+                    <h4 class="fw-bold mb-0">
+                        {{ total_reel_getiri|floatformat:2|intcomma }} ₺
+                    </h4>
+                </div>
+            </div>
+        </div>
+        
+            <div class="col">
+                <div class="card stat-card p-3 border-0 shadow-sm text-white"
+                     style="background: #219ebc;">
+                    <small class="fw-bold opacity-75">PORTFÖY DEĞERİ</small>
+                    <h4 class="fw-bold mb-0">
+                         {{ total_portfoy_degeri|floatformat:2|intcomma }} ₺
+                    </h4>
+                </div>
+            </div>
+    </div>
+            <p class="lead">
+                <span class="badge text-white" style="background: #355070;">
+                    Sistem Tarihi: {% now "Y-m-d" %}
+                </span>
+            </p>
+
+</div>
+
+<div class="container mb-5">
+    
+    <div class="table-container mb-4 shadow-sm">
+        <div class="d-flex justify-content-between align-items-center mb-4">            
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="m-0 text-primary">🌍 Hisse Senedi Portföyü</h3>
+            
+            <a href="{% url 'admin:index' %}" class="btn btn-outline-dark btn-sm shadow-sm">
+                <i class="bi bi-sliders"></i> Yönetim Paneli
+            </a>
+            
+        </div>        
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Varlık</th>
+                        <th>Tür</th>
+                        <th>Adet</th>
+                        <th>Maliyet</th>
+                        <th>Enflasyon Farkı 🛡️</th> 
+                        <th>Güncel Değer</th>
+                        <th>Kâr/Zarar</th>
+                        <th>Reel Getiri</th>
+                        <th>Durum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in hisse_listesi %}
+                    <tr>
+                        <td><strong>{{ item.symbol }}</strong> <br><small class="text-muted">{{ item.name}}</small></td>
+                        <td><span class="badge bg-secondary badge-asset">{{ item.asset_type }}</span></td>
+                        <td>{{ item.qty|floatformat:2 }}</td>
+                        <td>₺{{ item.ham_maliyet|floatformat:2 }}</td>
+                        <td>₺{{ item.vergi_kalkani|floatformat:2 }}</td>
+                        <td>₺{{ item.guncel_deger|floatformat:2 }}</td>
+                        <td class="{% if item.kar_zarar >= 0 %}text-profit{% else %}text-loss{% endif %}">₺{{ item.kar_zarar|floatformat:2 }}</td>
+                        <td class="fw-bold {% if item.reel_kar >= 0 %}text-profit{% else %}text-loss{% endif %}">{{ item.reel_kar|floatformat:2 }}</td>                                                
+                        <td class="fw-bold {% if item.performans >= 0 %}text-profit{% else %}text-loss{% endif %}">
+                            {% if item.performans >= 0 %}
+                                <span class="badge bg-success-subtle text-success">▲ %{{ item.performans|floatformat:2 }}</span>
+                            {% else %}
+                                <span class="badge bg-danger-subtle text-danger">▼ %{{ item.performans|floatformat:2 }}</span>
+                            {% endif %}
+                        </td>                           
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="table-container shadow-sm border-start border-warning border-5">
+        <h3 class="mb-4 text-warning">🟠 Kripto Varlık Takibi</h3>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Varlık</th>
+                        <th>Tür</th>
+                        <th>Adet</th>
+                        <th>Maliyet</th>
+                        <th>Enflasyon Farkı 🛡️</th>
+                        <th>Güncel Değer</th>
+                        <th>Kâr/Zarar</th>
+                        <th>Reel Getiri</th>                        
+                        <th>Durum</th>
+                    </tr>
+                </thead>
+                <tbody>
+                                    {% for item in kripto_listesi %}
+                                    <tr>
+                                        <td><strong>{{ item.symbol }}</strong><br><small class="text-muted">{{ item.name}}</small></td>
+                                        <td><span class="badge bg-secondary badge-asset">{{ item.asset_type }}</span></td>
+                                        <td>{{ item.qty|floatformat:4 }}</td>
+                                        <td>₺{{ item.ham_maliyet|floatformat:2 }}</td>
+                                        <td>₺{{ item.vergi_kalkani|floatformat:2 }}</td>
+                                        <td>₺{{ item.guncel_deger|floatformat:2 }}</td>
+                                        <td class="{% if item.kar_zarar >= 0 %}text-profit{% else %}text-loss{% endif %}">₺{{ item.kar_zarar|floatformat:2 }}</td>
+                                        <td class="fw-bold {% if item.reel_kar >= 0 %}text-profit{% else %}text-loss{% endif %}">{{ item.reel_kar|floatformat:2 }}</td>                                        
+                                        <td>
+                                            {% if item.performans >= 0 %}
+                                                <span class="badge bg-success-subtle text-success">HODL ▲ %{{ item.performans|floatformat:2 }}</span>
+                                            {% else %}
+                                                <span class="badge bg-danger-subtle text-danger">DIP ▼ %{{ item.performans|floatformat:2 }}</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">Stokta kripto varlık bulunamadı.</td>
+                                    </tr>
+                                    {% endfor %} </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="card p-4 mb-4">
+    <canvas id="portfolioChart" style="max-height: 300px;"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<div class="card p-4 mb-4">
+    <div class="card p-4 mb-4 bg-white shadow-sm mt-4">
+        <h4 class="mb-3 text-secondary fw-semibold">Satış Trend Çizgisi Grafiği</h4>
+        <div style="height: 350px; width: 100%;">
+            <canvas id="performanceLineChart"></canvas>
+        </div>
+    </div>
+
+    <div class="table-container shadow-sm mt-4">
+            <h3 class="mb-4 text-secondary fw-semibold">Gerçekleşen FIFO Satış Detayları (Excel / CSV Akışı)</h3>        
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Satış Tarihi</th>
+                        <th>Varlık</th>
+                        <th>Satılan Adet</th>
+                        <th>Alış Maliyeti</th>
+                        <th>Endeksli Maliyet</th>
+                        <th>Satış Tutarı</th>
+                        <th>Reel Kâr/Zarar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sale in sales_data %}
+                    <tr>
+                        <td>{{ sale.db_date|date:"d-m-Y" }}</td>
+                        <td>
+                            <span class="badge bg-info text-dark fw-bold">
+                                {{ sale.db_asset_symbol }}
+                            </span>
+                        </td>
+                        <td>{{ sale.db_quantity|floatformat:4 }}</td>
+                        
+                        <td>{{ sale.calc_purchase_value|floatformat:2 }} ₺</td>
+                        <td class="text-warning fw-semibold">{{ sale.calc_indexed_purchase|floatformat:2 }} ₺</td>
+                        <td class="text-success fw-semibold">{{ sale.calc_sale_value|floatformat:2 }} ₺</td>
+                        <td class="fw-bold {% if sale.calc_net_profit >= 0 %}text-profit{% else %}text-loss{% endif %}">{{ sale.calc_net_profit|floatformat:2 }} ₺</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted p-4">
+                            Sale tablosundaki veriler ayrıştırılamadı veya liste boş.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="d-grid d-md-flex justify-content-md-center mb-4">
+            <a href="{% url 'export_sales' %}" class="btn btn-outline-dark px-5 btn-sm shadow-sm">
+                <i class="bi bi-bank"></i> Vergi Beyannamesi İçin Excel (CSV) İndir
+            </a>
+        </div>   
+           
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('portfolioChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ chart_labels|safe }},
+            datasets: [{
+                data: {{ chart_values|safe }},
+                backgroundColor: ['#1e3c72', '#2ecc71', '#f1c40f', '#e74c3c', '#9b59b6']
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
+
+    const lineCtx = document.getElementById('performanceLineChart').getContext('2d');
+    
+    new Chart(lineCtx, {
+        type: 'line',
+        data: {
+            labels: {{ line_labels|safe }},
+            datasets: [
+                {
+                    label: 'Alış Maliyeti (TL)',
+                    data: {{ alis_maliyetleri|safe }},
+                    borderColor: '#94a3b8',
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    tension: 0.15,
+                    pointRadius: 3
+                },
+                {
+                    label: 'Endeksli Maliyet (TL)',
+                    data: {{ endeksli_maliyetler|safe }},
+                    borderColor: '#f59e0b',
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    tension: 0.15,
+                    pointRadius: 3
+                },
+                {
+                    label: 'Satış Tutarı (TL)',
+                    data: {{ satislar|safe }},
+                    borderColor: '#10b981',
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    tension: 0.15,
+                    pointRadius: 3
+                },
+                {
+                    label: 'Net Reel Kâr (TL)',
+                    data: {{ net_satislar|safe }},
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.04)',
+                    borderWidth: 3,
+                    tension: 0.15,
+                    pointRadius: 4,
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'top', labels: { boxWidth: 12 } }
+            },
+            scales: {
+                x: { grid: { display: false } },
+                y: {
+                    ticks: {
+                        callback: function(value) { return value.toLocaleString('tr-TR') + ' ₺'; }
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
