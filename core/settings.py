@@ -121,10 +121,5 @@ STATIC_URL = 'static/'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-REQUIRED_DIRECTORIES = [
-    os.path.join(BASE_DIR, 'data'),
-]
-
-for directory in REQUIRED_DIRECTORIES:
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+if not os.path.exists('data'):
+    os.makedirs('data')
