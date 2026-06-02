@@ -43,15 +43,28 @@ yapılandırılmıştır. Geliştirme (Local) ve Üretim (Production)
 modüllerinin kilitli versiyonları şu şekildedir:
 
 ```text
+
+# Temel Geliştirme Framework'ü
 Django==6.0.5
+
+# Veritabanı Sürücüsü (PostgreSQL)
 psycopg2-binary==2.9.12
+
+# Veri Analizi ve Excel Entegrasyonları
 pandas==3.0.3
 numpy==2.4.6
 openpyxl==3.1.5
+
+# Canlı Finansal Veri ve Kur Servisleri
 yfinance==1.3.0
 requests==2.34.2
 python-dateutil==2.9.0.post0
+
+# Üretim (Production) Ortamı Araçları
+waitress==3.0.2
 gunicorn==26.0.0
 whitenoise==6.12.0
+
+# Yardımcı Metin ve SQL Düzenleyiciler
 sqlparse==0.5.5
 asgiref==3.11.1
