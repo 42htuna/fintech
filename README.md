@@ -45,7 +45,7 @@ modüllerinin kilitli versiyonları şu şekildedir:
 ```text
 
 # Temel Geliştirme Framework'ü
-Django==6.0.5
+Django==6.0.6
 
 # Veritabanı Sürücüsü (PostgreSQL)
 psycopg2-binary==2.9.12
@@ -56,7 +56,7 @@ numpy==2.4.6
 openpyxl==3.1.5
 
 # Canlı Finansal Veri ve Kur Servisleri
-yfinance==1.3.0
+yfinance==1.4.1
 requests==2.34.2
 python-dateutil==2.9.0.post0
 
