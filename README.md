@@ -68,3 +68,41 @@ whitenoise==6.12.0
 # Yardımcı Metin ve SQL Düzenleyiciler
 sqlparse==0.5.5
 asgiref==3.11.1
+```
+---
+
+## 🔄 Django dumpdata ve loaddata ile yedekleme (backup.bat/backup.sh):
+
+Verileri Windows ortamından, Linux ortamına aktarırken Türkçe
+karakterlerin bozulmaması için **UTF8** karakter kodlamasını
+"-Xutf8" parametresi ile çağırılmalıdır.
+
+Boş veritabanına geri yükleme yaparken, veri çakışmalarını ve hataları 
+önlemek için **--exclude** parametresi ile **contenttypes** ve 
+**auth.Permission** tablolarını hariç tutulmalıdır.
+
+### Windows ortamında:
+
+```bash
+python -Xutf8 manage.py dumpdata --exclude contenttypes --exclude auth.Permission --format json --indent 4 -o database_backup.json
+```
+```bash
+.\backup.bat
+```
+
+### Linux ortamında:
+
+```bash
+python manage.py dumpdata --exclude contenttypes --exclude auth.Permission --indent 4 -o database_backup.json
+```
+```bash
+bash backup.sh
+```
+---
+
+### Geri yükleme:
+
+```bash
+python manage.py loaddata database_backup.json
+```
+---
