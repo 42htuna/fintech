@@ -74,12 +74,12 @@ asgiref==3.11.1
 ## 🔄 Django dumpdata ve loaddata ile yedekleme (backup.bat/backup.sh):
 
 Verileri Windows ortamından, Linux ortamına aktarırken Türkçe
-karakterlerin bozulmaması için **UTF8** karakter kodlamasını
-"-Xutf8" parametresi ile çağırılmalıdır.
+karakterlerin bozulmaması için **-Xutf8** parametresi ile **UTF8**
+karakter kodlaması seçilmelidir.
 
-Boş veritabanına geri yükleme yaparken, veri çakışmalarını ve hataları 
-önlemek için **--exclude** parametresi ile **contenttypes** ve 
-**auth.Permission** tablolarını hariç tutulmalıdır.
+Boş veritabanına geri yükleme yaparken, veri çakışmalarını ve hataları
+önlemek için de **--exclude** parametresi ile **contenttypes** ve
+**auth.Permission** tabloları hariç tutulmalıdır.
 
 ### Windows ortamında:
 
