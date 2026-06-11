@@ -95,6 +95,7 @@ load_dotenv() # .env dosyasını yükler
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 ```
 **Özetle:** **SECRET_KEY** aslında **settings.py** içinde bir koddur. Ama en doğru pratik, onu settings.py yanındaki bir **.env** dosyasında gizlemektir.
+
 ---
 
 ## 🔄 Django dumpdata ve loaddata ile yedekleme (backup.bat/backup.sh):
