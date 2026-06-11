@@ -22,3 +22,6 @@ whitenoise==6.12.0
 # Yardımcı Metin ve SQL Düzenleyiciler
 sqlparse==0.5.5
 asgiref==3.11.1
+
+# Çevre Değişkenleri ve Yapılandırma Yönetimi
+python-dotenv==1.2.2

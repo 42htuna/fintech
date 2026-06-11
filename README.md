@@ -68,7 +68,33 @@ whitenoise==6.12.0
 # Yardımcı Metin ve SQL Düzenleyiciler
 sqlparse==0.5.5
 asgiref==3.11.1
+
+# Çevre Değişkenleri ve Yapılandırma Yönetimi
+python-dotenv==1.2.2
 ```
+---
+
+### Güvenlik açısından en iyisi:
+**SECRET_KEY** güvenlik anahtarını kendi makinenizde taze olarak üretmektir!
+```bash
+python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+```
+**settings.py** dosyasının yanına **.env** adında bir dosya oluşturursunuz (Başında nokta var, uzantısı yok).
+İçine anahtarınızı yazarsınız:
+```plaintext
+# .env dosyasının içi
+DJANGO_SECRET_KEY=&k^9#v!4$p@7(m*2)...
+```
+settings.py dosyanızın içini ise bu dosyadan okuyacak şekilde değiştirirsiniz (örneğin django-environ veya python-dotenv kütüphanesi kullanarak):
+```python
+# settings.py içi
+import os
+from dotenv import load_dotenv
+
+load_dotenv() # .env dosyasını yükler
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+```
+**Özetle:** **SECRET_KEY** aslında **settings.py** içinde bir koddur. Ama en doğru pratik, onu settings.py yanındaki bir **.env** dosyasında gizlemektir.
 ---
 
 ## 🔄 Django dumpdata ve loaddata ile yedekleme (backup.bat/backup.sh):
