@@ -31,17 +31,26 @@ def calculate_real_cost(transaction):
 def get_live_data(symbol, asset_type):
     try:
         if asset_type == 'BIST':
-            # BIST hisseleri için .IS eki şart
             ticker_sym = f"{symbol}.IS"
         elif asset_type == 'CRYPTO':
             ticker_sym = f"{symbol}-USD"
+        elif asset_type == 'FOREX':
+            ticker_sym = f"{symbol}TRY=X"
+        elif asset_type == 'EU':
+            ticker_sym = symbol if "." in symbol else f"{symbol}.AS"
         else:
             ticker_sym = symbol
 
         ticker = yf.Ticker(ticker_sym)
         hist = ticker.history(period="1d")
+        
+        if hist.empty and asset_type == 'EU' and ticker_sym.endswith(".AS"):
+            print(f"Uyarı: {ticker_sym} boş döndü, ASML.DE deneniyor...")
+            ticker = yf.Ticker(f"{symbol}.DE")
+            hist = ticker.history(period="1d")        
 
         if hist.empty:
+            print(f"UYARI: {ticker_sym} sembolü için veri bulunamadı!")
             return Decimal('0.00'), Decimal('1.00')
 
         price = Decimal(str(hist['Close'].iloc[-1]))
@@ -49,6 +58,9 @@ def get_live_data(symbol, asset_type):
         # Kur çekme mantığı
         if asset_type == 'BIST':
             exchange_rate = Decimal('1.00')
+        elif asset_type == 'FOREX':
+            # YENİ: Döviz tipinde exchange_rate doğrudan fiyatın kendisine eşittir
+            exchange_rate = price
         else:
             # USD veya EUR kuru (Sembol bazlı basit mantık)
             currency = "USDTRY=X" if asset_type in ['US', 'CRYPTO'] else "EURTRY=X"

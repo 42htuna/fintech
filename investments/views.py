@@ -10,6 +10,7 @@ from .models import Asset, Transaction, Sale, InflationIndex
 from .services import get_live_data
 
 def portfolio_dashboard(request):
+        
     assets = Asset.objects.all()
     hisse_listesi = []
     kripto_listesi = []
@@ -36,6 +37,7 @@ def portfolio_dashboard(request):
         # Canlı Veri Çek
         try:
             live_price, live_exchange_rate = get_live_data(asset.symbol, asset.asset_type)
+            
         except:
             live_price, live_exchange_rate = Decimal('0.00'), Decimal('1.00')
 
@@ -54,12 +56,13 @@ def portfolio_dashboard(request):
             actual_multiplier = multiplier if multiplier >= Decimal('1.10') else Decimal('1.00')
             endekslenmis_maliyet_tl += alis_maliyet_tl * actual_multiplier
 
+        guncel_fiyat_tl = (live_price * live_exchange_rate).quantize(Decimal('0.01'))
         guncel_deger_tl = (total_qty * live_price * live_exchange_rate).quantize(Decimal('0.01'))
         kar_zarar = guncel_deger_tl - ham_maliyet_tl
         performans = ((guncel_deger_tl / ham_maliyet_tl) - 1) * 100 if ham_maliyet_tl > 0 else 0
         reel_kar = guncel_deger_tl - endekslenmis_maliyet_tl
         vergi_kalkani = endekslenmis_maliyet_tl - ham_maliyet_tl
-
+        
         # --- LÜZUMSUZ DÖNGÜLERİ SİLEN SİHİRLİ DOKUNUŞ: KÜMÜLATİF TOPLAMA ---
         total_maliyet += ham_maliyet_tl
         total_reel_maliyet += endekslenmis_maliyet_tl
@@ -74,6 +77,7 @@ def portfolio_dashboard(request):
             'asset_type': asset.get_asset_type_display(),
             'qty': total_qty,
             'ham_maliyet': ham_maliyet_tl,
+            'guncel_fiyat': guncel_fiyat_tl,
             'guncel_deger': guncel_deger_tl,
             'kar_zarar': kar_zarar,
             'performans': performans,
@@ -200,10 +204,22 @@ def portfolio_dashboard(request):
             })
         except Exception as e:
             print(f"Kümülatif Hesaplama Hatası: {str(e)}")
+            
+    try:
+        _, usd_kur = get_live_data('USD', 'FOREX')
+    except:
+        usd_kur = Decimal('1.00')
+
+    try:
+        _, eur_kur = get_live_data('EUR', 'FOREX')
+    except:
+        eur_kur = Decimal('1.00')
 
     context = {
         'hisse_listesi': hisse_listesi,
         'kripto_listesi': kripto_listesi,
+        'usd_kur': usd_kur,
+        'eur_kur': eur_kur,
         'total_kalkan': total_kalkan_tl,
         'total_maliyet': total_maliyet,
         'total_reel_maliyet': total_reel_maliyet,
