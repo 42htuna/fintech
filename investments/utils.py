@@ -11,24 +11,21 @@ from django.conf import settings
 def execute_fifo_sale(asset, sell_qty, sell_px_foreign, s_date, s_kur, s_comm=0):
     sell_qty = Decimal(str(sell_qty))
     
-    # --- ÖN STOK KONTROLÜ ---
     total_available = Transaction.objects.filter(
         asset=asset, 
         transaction_type='BUY', 
         remaining_quantity__gt=0
     ).aggregate(total=models.Sum('remaining_quantity'))['total'] or Decimal('0')
 
-    # 0.9999 gibi küsurat takılmalarını engellemek için tolerans ekleyelim
     EPSILON = Decimal('0.00000001')
     if total_available + EPSILON < sell_qty:
         raise ValueError(f"Yetersiz stok! Mevcut: {total_available}, İstenen: {sell_qty}")
 
-    # --- FIFO İŞLEMLERİ ---
     purchases = Transaction.objects.filter(
         asset=asset,
         transaction_type='BUY',
         remaining_quantity__gt=0
-    ).order_by('date', 'id') # Aynı gün alınanlarda ID sırası şaşmasın
+    ).order_by('date', 'id')
 
     rem = Decimal(str(sell_qty))
 
@@ -37,7 +34,6 @@ def execute_fifo_sale(asset, sell_qty, sell_px_foreign, s_date, s_kur, s_comm=0)
 
         take = p.remaining_quantity if p.remaining_quantity <= rem else rem
 
-        # --- 1. ALIŞ ENDEKSİ (Transaction tablosundaki yi_ufe_index alanından çekiyoruz) ---
         if p.yi_ufe_index is not None:
             p_idx_val = p.yi_ufe_index
         else:
@@ -48,7 +44,6 @@ def execute_fifo_sale(asset, sell_qty, sell_px_foreign, s_date, s_kur, s_comm=0)
             except InflationIndex.DoesNotExist:
                 p_idx_val = Decimal('0.00')
 
-        # --- 2. SATIŞ ENDEKSİ (Satış Tarihi M-1) ---
         try:
             s_m1_date = s_date.replace(day=1) - timedelta(days=1)
             s_idx_obj = InflationIndex.objects.get(year=s_m1_date.year, month=s_m1_date.month)
@@ -56,10 +51,8 @@ def execute_fifo_sale(asset, sell_qty, sell_px_foreign, s_date, s_kur, s_comm=0)
         except InflationIndex.DoesNotExist:
             s_idx_val = Decimal('0.00')
 
-        # --- HASH PAKETLEME (Mühür) ---
         p_hash = f"{p.date.strftime('%d/%m/%Y')}|{p.price_foreign}|{p.commission_foreign}|{p.exchange_rate}|{p_idx_val}"
 
-        # --- SATIŞI KAYDET ---
         try:
             Sale.objects.create(
                 asset=asset,
@@ -161,7 +154,6 @@ def excel_den_kur_yukle(dosya_yolu):
     df = pd.read_excel(dosya_yolu)
     df.columns = df.columns.str.strip()
 
-    # Veritabanındaki mevcut tarihleri çekip set yapıyoruz (Arama hızı O(1))
     mevcut_tarihler = set(IndicativeExchangeRate.objects.values_list('date', flat=True))
     kayitlar = []
 
@@ -171,7 +163,6 @@ def excel_den_kur_yukle(dosya_yolu):
 
         target_date = pd.to_datetime(row['Tarih'], dayfirst=True).date()
 
-        # Veritabanında zaten varsa atla, sqlite_seq fırlamasın
         if target_date in mevcut_tarihler:
             continue
 
@@ -231,5 +222,4 @@ def get_crypto_rate(symbol, date):
     Şimdilik manuel girdiğin maliyetleri kullanacağız ama bu fonksiyon
     ileride otomatikleşecek.
     """
-    # Kripto piyasası 7/24 açık olduğu için hafta sonu kontrolüne gerek yok.
     pass

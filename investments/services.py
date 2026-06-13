@@ -1,72 +1,73 @@
-from decimal import Decimal
 from .models import InflationIndex
-import yfinance as yf
 from decimal import Decimal
+import yfinance as yf
+
+EU_HINTS = {
+    "ASML": "AS", 
+    "ADYEN": "AS", 
+    "SAP": "DE", 
+    "SIE": "DE", 
+    "BMW": "DE", 
+    "VOW3": "DE", 
+    "AIR": "PA", 
+    "MC": "PA", 
+    "OR": "PA", 
+    "ENI": "MI", 
+    "ISP": "MI",
+    "VUAA": "L", 
+    "MEUD": "MI"
+}
 
 def calculate_real_cost(transaction):
-    """
-    İşlemin yapıldığı aydaki Yİ-ÜFE ile en güncel Yİ-ÜFE'yi
-    kıyaslayarak enflasyondan arındırılmış maliyeti hesaplar.
-    """
-    # 1. Alış tarihindeki endeksi bul
-    buy_index = InflationIndex.objects.filter(
-        year=transaction.date.year,
-        month=transaction.date.month
-    ).first()
-
-    # 2. En güncel (son açıklanan) endeksi bul
+    buy_index = InflationIndex.objects.filter(year=transaction.date.year, month=transaction.date.month).first()
     latest_index = InflationIndex.objects.order_by('-year', '-month').first()
 
-    if not buy_index or not latest_index:
-        # Veri eksikse katsayıyı 1 kabul et (hesaplama yapma)
-        return transaction.total_tl
+    if not buy_index or not latest_index or buy_index.value <= 0:
+        return Decimal(str(transaction.total_tl or 0)).quantize(Decimal('0.01'))
 
-    # 3. Katsayıyı Hesapla (Örn: 1.3748)
     multiplier = latest_index.value / buy_index.value
-
-    # 4. Reel Maliyeti Hesapla
-    real_cost = transaction.total_tl * multiplier
+    final_multiplier = multiplier if multiplier >= Decimal('1.10') else Decimal('1.00')
+    
+    real_cost = Decimal(str(transaction.total_tl or 0)) * final_multiplier
     return real_cost.quantize(Decimal('0.01'))
 
-def get_live_data(symbol, asset_type):
-    try:
-        if asset_type == 'BIST':
-            ticker_sym = f"{symbol}.IS"
-        elif asset_type == 'CRYPTO':
-            ticker_sym = f"{symbol}-USD"
-        elif asset_type == 'FOREX':
-            ticker_sym = f"{symbol}TRY=X"
-        elif asset_type == 'EU':
-            ticker_sym = symbol if "." in symbol else f"{symbol}.AS"
-        else:
-            ticker_sym = symbol
+def get_live_data(symbol, asset_type, currency):    
+    if "." in symbol:
+        ticker_sym = symbol
+    elif asset_type == "EU":
+        ticker_sym = f"{symbol}.{EU_HINTS.get(symbol, 'AS')}"
+    elif asset_type == 'BIST':
+        ticker_sym = f"{symbol}.IS"
+    elif asset_type == 'CRYPTO':
+        ticker_sym = f"{symbol}-USD"
+    elif asset_type == 'FOREX':
+        ticker_sym = f"{symbol}TRY=X"
+    else:
+        ticker_sym = symbol
 
-        ticker = yf.Ticker(ticker_sym)
-        hist = ticker.history(period="1d")
+    def fetch_with_fallback(sym, asset_type):
+        suffixes = ["L", "DE", "AS", "PA", "MI"] if asset_type in ["EU", "US"] else []
         
-        if hist.empty and asset_type == 'EU' and ticker_sym.endswith(".AS"):
-            print(f"Uyarı: {ticker_sym} boş döndü, ASML.DE deneniyor...")
-            ticker = yf.Ticker(f"{symbol}.DE")
-            hist = ticker.history(period="1d")        
+        for s in [sym] + [f"{sym}.{suf}" for suf in suffixes]:
+            hist = yf.Ticker(s).history(period="5d", interval="1d")
+            if not hist.empty:
+                return yf.Ticker(s), hist, s
+        return None, None, None
 
-        if hist.empty:
-            print(f"UYARI: {ticker_sym} sembolü için veri bulunamadı!")
-            return Decimal('0.00'), Decimal('1.00')
+    ticker, hist, ticker_sym = fetch_with_fallback(ticker_sym, asset_type)
+    
+    if hist is None or hist["Close"].empty:
+        raise ValueError(f"{symbol} için canlı veri bulunamadı.")
 
-        price = Decimal(str(hist['Close'].iloc[-1]))
+    price = Decimal(str(hist["Close"].iloc[-1]))
 
-        # Kur çekme mantığı
-        if asset_type == 'BIST':
-            exchange_rate = Decimal('1.00')
-        elif asset_type == 'FOREX':
-            # YENİ: Döviz tipinde exchange_rate doğrudan fiyatın kendisine eşittir
-            exchange_rate = price
-        else:
-            # USD veya EUR kuru (Sembol bazlı basit mantık)
-            currency = "USDTRY=X" if asset_type in ['US', 'CRYPTO'] else "EURTRY=X"
-            rate_hist = yf.Ticker(currency).history(period="1d")
-            exchange_rate = Decimal(str(rate_hist['Close'].iloc[-1]))
+    if asset_type == "BIST":
+        exchange_rate = Decimal("1.00")
+    elif asset_type == "FOREX":
+        exchange_rate = price
+    else:
+        fx_pair = "EURTRY=X" if currency == "EUR" else "USDTRY=X"
+        fx_hist = yf.Ticker(fx_pair).history(period="1d")
+        exchange_rate = Decimal(str(fx_hist["Close"].iloc[-1])) if not fx_hist.empty else Decimal("1.00")
 
-        return price, exchange_rate
-    except:
-        return Decimal('0.00'), Decimal('1.00')
+    return price, exchange_rate

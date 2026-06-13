@@ -117,22 +117,27 @@
                     <tr>
                         <th>Varlık</th>
                         <th>Tür</th>
-                        <th>Adet</th>
-                        <th>Canlı Fiyat ⚡</th>
+                        <th>Miktar</th>
+                        <th>Fiyat(FX)</th>
+                        <th>Fiyat(TL)</th>
                         <th>Maliyet</th>
-                        <th>Enflasyon Farkı 🛡️</th> 
-                        <th>Güncel Değer</th>
+                        <th>Enf.Farkı</th> 
+                         <th>Toplam</th>
                         <th>Kâr/Zarar</th>
                         <th>Reel Getiri</th>
                         <th>Durum</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for item in hisse_listesi %}
+                    {% for item in hisse_listesi %}           
+                                            
                     <tr>
                         <td><strong>{{ item.symbol }}</strong> <br><small class="text-muted">{{ item.name}}</small></td>
                         <td><span class="badge bg-secondary badge-asset">{{ item.asset_type }}</span></td>
                         <td>{{ item.qty|floatformat:2 }}</td>
+                        <td class="text-info fw-bold">
+                            {% if item.para_birimi == 'EUR' %}€{% elif item.para_birimi == 'USD' %}${% else %}{{ item.para_birimi }}{% endif %}{{ item.price|floatformat:2 }}                       
+                        </td>
                         <td class="text-success fw-bold">₺{{ item.guncel_fiyat|floatformat:2 }}</td>
                         <td>₺{{ item.ham_maliyet|floatformat:2 }}</td>
                         <td>₺{{ item.vergi_kalkani|floatformat:2 }}</td>
@@ -161,11 +166,12 @@
                     <tr>
                         <th>Varlık</th>
                         <th>Tür</th>
-                        <th>Adet</th>
-                        <th>Canlı Fiyat ⚡</th>
+                        <th>Miktar</th>
+                        <th>Fiyat(FX)</th>
+                        <th>Fiyat(TL)</th>
                         <th>Maliyet</th>
-                        <th>Enflasyon Farkı 🛡️</th>
-                        <th>Güncel Değer</th>
+                        <th>Enf.Farkı</th>
+                        <th>Toplam</th>
                         <th>Kâr/Zarar</th>
                         <th>Reel Getiri</th>                        
                         <th>Durum</th>
@@ -177,6 +183,9 @@
                         <td><strong>{{ item.symbol }}</strong><br><small class="text-muted">{{ item.name}}</small></td>
                         <td><span class="badge bg-secondary badge-asset">{{ item.asset_type }}</span></td>
                         <td>{{ item.qty|floatformat:4 }}</td>
+                        <td class="text-info fw-bold">
+                            {% if item.para_birimi == 'EUR' %}€{% elif item.para_birimi == 'USD' %}${% else %}{{ item.para_birimi }}{% endif %}{{ item.price|floatformat:2 }}                    
+                        </td>
                         <td class="text-success fw-bold">₺{{ item.guncel_fiyat|floatformat:2 }}</td>
                         <td>₺{{ item.ham_maliyet|floatformat:2 }}</td>
                         <td>₺{{ item.vergi_kalkani|floatformat:2 }}</td>
