@@ -43,7 +43,6 @@ def portfolio_dashboard(request):
         if total_qty <= 0:
             continue
         
-        # Canlı veri çek
         try:
             live_price, live_exchange_rate = get_live_data(
                 asset.symbol,
@@ -59,7 +58,7 @@ def portfolio_dashboard(request):
 
         for s in stocks:
 
-            cost = s.remaining_quantity * s.price_foreign * s.exchange_rate
+            cost = ((s.remaining_quantity * s.price_foreign) + s.commission_foreign) * s.exchange_rate
             ham_maliyet_tl += cost
 
             buy_index = (

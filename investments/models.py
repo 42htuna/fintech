@@ -31,7 +31,7 @@ class Asset(models.Model):
         return self.CURRENCY_MAP.get(self.asset_type, "UNKNOWN")
         
     def __str__(self):
-        return f"{self.symbol} - {self.name}"    
+        return f"{self.symbol} - {self.name} - ({self.asset_type})"    
 
 class Transaction(models.Model):
 
@@ -100,6 +100,9 @@ class Transaction(models.Model):
     def generate_hash(self):
         """Excel'in beklediği mühürlü veri paketi"""
         return f"{self.date.strftime('%d/%m/%Y')}|{self.price_foreign}|{self.commission_foreign}|{self.exchange_rate}|{self.yi_ufe_index}"
+        
+    def __str__(self):
+        return f"{self.date.strftime('%d.%m.%Y')} - {self.asset.symbol} ({self.amount} Adet)"        
 
 class Sale(models.Model):
 	
@@ -132,7 +135,7 @@ class Sale(models.Model):
         verbose_name_plural = "Satışlar"
 
     def __str__(self):
-        return f"{self.sale_date} - {self.asset.symbol} ({self.quantity} Adet)"
+        return f"{self.sale_date.strftime('%d.%m.%Y')} - {self.asset.symbol} ({self.quantity} Adet)"
 
 class InflationIndex(models.Model):
     year = models.IntegerField(verbose_name="Yıl")
