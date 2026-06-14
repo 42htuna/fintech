@@ -134,4 +134,4 @@ python manage.py loaddata database_backup.json
 ```
 ---
 
-![Proje Görünümü](https://github.com/42htuna/fintech/investments/static/fintech.png)
+![Proje Görünümü](https://github.com/42htuna/fintech/blob/main/investments/static/fintech.png)
