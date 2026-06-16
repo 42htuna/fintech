@@ -41,7 +41,6 @@ class TransactionAdmin(admin.ModelAdmin):
                     from django.contrib import messages
                     messages.error(request, f"Hata: {str(e)}")
             else:
-                # Alış veya güncellemeler için kur kuralı
                 if obj.asset.asset_type == 'BIST':
                     obj.exchange_rate = Decimal('1.0000')
                 else:

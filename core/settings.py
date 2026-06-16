@@ -21,8 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-load_dotenv()
+load_dotenv(override=False)
+
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+EVDS_KEY = os.getenv("EVDS_API_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -128,5 +130,12 @@ STATICFILES_DIRS = []
 
 if not os.path.exists('data'):
     os.makedirs('data')
+    
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True

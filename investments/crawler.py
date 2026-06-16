@@ -18,23 +18,20 @@ def fetch_yi_ufe_data(api_key):
     try:
         response = requests.get(url, headers=headers, timeout=15)
         
-        # IP kısıtlaması veya engelde sunucu HTML döndüğü için buraya düşüyor:
         if "html" in response.headers.get('Content-Type', '').lower():
             print("❌ HATA: Sunucu JSON yerine HTML döndü. API anahtarını kontrol et veya IP kısıtlamasını kaldır.")
-            return False  # Kalan kodun çalışmaması ve hata bildirimi için False dönüyoruz
+            return False
             
         data = response.json()
         
         if 'items' in data:
             count = 0
             for item in data['items']:\
-                # ... (Buradaki mevcut döngü ve veritabanına yazma kodların aynen kalıyor)
                 pass
-            
-            return True # Her şey başarıyla bittiyse True dön
+            return True
             
     except Exception as e:
         print(f"❌ API Hatası oluştu: {e}")
-        return False # İstisna (Exception) durumunda da False dön
+        return False
         
     return False

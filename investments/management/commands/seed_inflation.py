@@ -3,7 +3,7 @@ from investments.models import InflationIndex
 from decimal import Decimal
 
 class Command(BaseCommand):
-    help = 'Yİ-ÜFE verilerini manuel olarak yükler'
+    help = 'Yİ-ÜFE verilerini manuel olarak yükler.'
 
     def handle(self, *args, **options):
         data = [

@@ -136,7 +136,7 @@
                         <td><span class="badge bg-secondary badge-asset">{{ item.asset_type }}</span></td>
                         <td>{{ item.qty|floatformat:2 }}</td>
                         <td class="text-info fw-bold">
-                            {% if item.para_birimi == 'EUR' %}€{% elif item.para_birimi == 'USD' %}${% else %}{{ item.para_birimi }}{% endif %}{{ item.price|floatformat:2 }}                       
+                            {% if item.para_birimi == 'EUR' %}€{% elif item.para_birimi == 'USD' %}${% elif item.para_birimi == 'TRY' %}₺{% else %}{{ item.para_birimi }}{% endif %}{{ item.price|floatformat:2 }}                       
                         </td>
                         <td class="text-success fw-bold">₺{{ item.guncel_fiyat|floatformat:2 }}</td>
                         <td>₺{{ item.ham_maliyet|floatformat:2 }}</td>
@@ -183,9 +183,7 @@
                         <td><strong>{{ item.symbol }}</strong><br><small class="text-muted">{{ item.name}}</small></td>
                         <td><span class="badge bg-secondary badge-asset">{{ item.asset_type }}</span></td>
                         <td>{{ item.qty|floatformat:4 }}</td>
-                        <td class="text-info fw-bold">
-                            {% if item.para_birimi == 'EUR' %}€{% elif item.para_birimi == 'USD' %}${% else %}{{ item.para_birimi }}{% endif %}{{ item.price|floatformat:2 }}                    
-                        </td>
+                        <td class="text-info fw-bold">${{ item.price|floatformat:2 }}</td>
                         <td class="text-success fw-bold">₺{{ item.guncel_fiyat|floatformat:2 }}</td>
                         <td>₺{{ item.ham_maliyet|floatformat:2 }}</td>
                         <td>₺{{ item.vergi_kalkani|floatformat:2 }}</td>

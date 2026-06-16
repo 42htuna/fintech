@@ -5,8 +5,8 @@ import logging
 from decimal import Decimal
 from django.shortcuts import render
 from django.http import HttpResponse
+from .services import get_live_data, get_live_data_cached
 from .models import Asset, Transaction, Sale, InflationIndex
-from .services import get_live_data
 
 logger = logging.getLogger(__name__)
 
@@ -42,16 +42,17 @@ def portfolio_dashboard(request):
         total_qty = sum(s.remaining_quantity for s in stocks)
         if total_qty <= 0:
             continue
-        
+
         try:
-            live_price, live_exchange_rate = get_live_data(
+            live_price, live_exchange_rate = get_live_data_cached(
                 asset.symbol,
                 asset.asset_type,
                 asset.currency
             )
-        except Exception:
-            logger.exception("Live data error")
-            live_price, live_exchange_rate = Decimal('0.00'), Decimal('1.00')
+        except Exception as e:
+            logger.exception(f"Live data error for {asset.symbol}")
+            live_price = Decimal('0.00')
+            live_exchange_rate = Decimal('1.00')
 
         ham_maliyet_tl = Decimal('0.00')
         endekslenmis_maliyet_tl = Decimal('0.00')
@@ -72,8 +73,15 @@ def portfolio_dashboard(request):
 
             endekslenmis_maliyet_tl += cost * multiplier
        
+        if live_price is None or live_price.is_nan():
+            live_price = Decimal("0.00")
+        
         guncel_tl_fiyat = (live_price * live_exchange_rate).quantize(Decimal('0.01'))
         guncel_deger_tl = (total_qty * guncel_tl_fiyat).quantize(Decimal('0.01'))
+        
+        if guncel_deger_tl.is_nan():
+            guncel_deger_tl = Decimal("0.00")
+
         kar_zarar = guncel_deger_tl - ham_maliyet_tl
 
         performans = (
@@ -197,13 +205,27 @@ def portfolio_dashboard(request):
 
     def safe_fx(symbol):
         try:
-            return get_live_data(symbol, 'FOREX', symbol)[1]
+            return get_live_data_cached(symbol, 'FOREX', symbol)[1]
         except:
             return Decimal("1.00")
 
     usd_kur = safe_fx('USD')
     eur_kur = safe_fx('EUR')
+    
+    def clean_nan(value):
 
+        if isinstance(value, Decimal):
+            if value.is_nan() or value.is_infinite():
+                return Decimal('0.00')
+        return value
+
+    total_kalkan = clean_nan(total_kalkan_tl)
+    total_kar_zarar = clean_nan(total_kar_zarar)
+    total_reel_getiri = clean_nan(total_reel_getiri)
+    total_maliyet = clean_nan(total_maliyet)
+    total_reel_maliyet = clean_nan(total_reel_maliyet)
+    total_portfoy_degeri = clean_nan(total_portfoy_degeri)
+   
     return render(request, 'dashboard.html', {
         'hisse_listesi': hisse_listesi,
         'kripto_listesi': kripto_listesi,

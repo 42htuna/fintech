@@ -113,7 +113,6 @@ def excel_den_enflasyon_yukle(dosya_yolu):
     df.columns = df.columns.str.strip()
     df['Tarih'] = pd.to_datetime(df['Tarih']).dt.strftime('%Y-%m')  
     
-    # Veritabanındaki mevcut (Yıl, Ay) kayıtlarını çekip set yapıyoruz (Arama hızı O(1))
     mevcut_endeksler = set(InflationIndex.objects.values_list('year', 'month'))
     kayitlar = []
 
@@ -124,7 +123,6 @@ def excel_den_enflasyon_yukle(dosya_yolu):
         try:
             yil, ay = map(int, str(row['Tarih']).split('-'))
             
-            # Veritabanında varsa atla, SQLite auto-increment israf olmasın
             if (yil, ay) in mevcut_endeksler:
                 continue
 
