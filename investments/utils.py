@@ -184,7 +184,23 @@ def excel_den_kur_yukle(dosya_yolu):
     else:
         print("ℹ️ Yüklenecek kur verisi bulunamadı, veritabanı zaten güncel!")
 
+""" TCMB forex kur sorgulama fonksiyonudur.
+İleride belki uygulama içinde kullanılabilir!
+
+python manage.py shell
+from investments.utils import get_tcmb_rate
+get_tcmb_rate()
+get_tcmb_rate('EUR')
+get_tcmb_rate('EUR', '15062026')
+import datetime as datetime
+get_tcmb_rate('EUR', datetime.datetime(2026, 6, 17))
+"""
 def get_tcmb_rate(currency_code='USD', date=None):
+    print(f"get_tcmb_rate() fonksiyonu ile {currency_code} kuru çekiliyor...")
+    
+    if isinstance(date, str):
+        date = datetime.strptime(date, "%d%m%Y")
+        
     if date is None:
         date = datetime.now()
 
@@ -199,19 +215,23 @@ def get_tcmb_rate(currency_code='USD', date=None):
         date_str = current_date.strftime("%d%m%Y")
         path_str = current_date.strftime("%Y%m")
         url = f"https://www.tcmb.gov.tr/kurlar/{path_str}/{date_str}.xml"
-
+        print(url)
+        
         try:
             response = requests.get(url, timeout=5)
             if response.status_code == 200:
                 root = ET.fromstring(response.content)
                 for currency in root.findall('Currency'):
                     if currency.get('CurrencyCode') == currency_code:
-                        return Decimal(currency.find('ForexBuying').text)
+                        rate = Decimal(currency.find('ForexBuying').text)
+                        print(f"{date.strftime("%d.%m.%Y")} tarihinde {currency_code} kuru {rate} TL'dir.")
+                        return rate
         except Exception:
             pass
 
         current_date -= timedelta(days=1)
 
+    print(f"{currency_code} kuru için veri bulunamadı.")
     return None
 
 def get_crypto_rate(symbol, date):
