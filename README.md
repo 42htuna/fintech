@@ -190,6 +190,6 @@ waitress-serve --port=8000 --threads=16 --connection-limit=200 offermanager.wsgi
 
 ---
 
-### 7. Proje Öngörünümü
+### 7. 🔭 Proje Öngörünümü
 
 ![Proje Görünümü](https://github.com/42htuna/fintech/blob/main/investments/static/fintech.png)
