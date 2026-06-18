@@ -8,9 +8,7 @@ Bu proje; Borsa İstanbul (BIST), Amerikan Borsaları (US), Avrupa Borsaları (E
 
 * **Gelişmiş FIFO (First-In, First-Out) Algoritması:** Satış işlemlerinde eldeki ilk alınan varlıklar kuruşu kuruşuna tespit edilerek eritilir. Kalan stoklar veritabanı seviyesinde atomik olarak yönetilir.
 
-* **Enflasyon Düzeltmesi (Yİ-ÜFE):** Satış anında, varlığın alındığı ayın Yİ-ÜFE endeksi ($E_{\text{alis}}$) ile güncel endeks ($E_{\text{guncel}}$) kıyaslanarak düzeltilmiş maliyet hesaplanır:
-$$\text{Düzeltilmiş Maliyet} = \text{Maliyet}_{\text{orjinal}} \times \left( \frac{E_{\text{guncel}}}{E_{\text{alis}}} \right)$$
-Endeks bulunamazsa ana para güvenliği için çarpan $1.00$ kabul edilir.
+* **Enflasyon Düzeltmesi (Yİ-ÜFE):** Satılan varlığın alındığı ayın Yİ-ÜFE endeksi ile güncel endeks kıyaslanarak maliyet enflasyona göre pürüzsüzce revize edilir. Endeks bulunamazsa ana para güvenliği için çarpan `1.00` kabul edilir.
 
 * **Güvenli Mühürleme (FIFO Hash):** FIFO döngüsünün parçaladığı her işlem ve o günkü endeks değerleri benzersiz bir hash (`p_hash`) zinciri ile veritabanına kilitlenir.
 
@@ -85,7 +83,7 @@ DJANGO_SECRET_KEY=urettiginiz_gizli_anahtar
 **migrations** dizini yoksa oluşturmak için:
 
 ```bash
-python manage.py makemigrations <APP_NAME>
+python manage.py makemigrations investments
 python manage.py makemigrations
 ```
 
