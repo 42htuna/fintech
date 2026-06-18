@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+
 from investments.utils import fill_missing_inflation_values
 
 class Command(BaseCommand):

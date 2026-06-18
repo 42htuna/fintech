@@ -1,7 +1,9 @@
-import requests
 from datetime import datetime
-from .models import InflationIndex
 from decimal import Decimal
+
+import requests
+
+from .models import InflationIndex
 
 def fetch_yi_ufe_data(api_key):
     series_code = "TP.YI_UFE.GENEL" 

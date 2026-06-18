@@ -1,6 +1,7 @@
-from django.db import models
-from dateutil.relativedelta import relativedelta
 from decimal import Decimal
+from dateutil.relativedelta import relativedelta
+
+from django.db import models
 
 class Asset(models.Model):
     

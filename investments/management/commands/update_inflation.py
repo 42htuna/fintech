@@ -1,6 +1,8 @@
-from django.core.management.base import BaseCommand
-from investments.crawler import fetch_yi_ufe_data
 from django.conf import settings
+
+from django.core.management.base import BaseCommand
+
+from investments.crawler import fetch_yi_ufe_data
 
 class Command(BaseCommand):
     help = 'TCMB EVDS üzerinden Yİ-ÜFE verilerini günceller.'

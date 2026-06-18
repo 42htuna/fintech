@@ -1,11 +1,13 @@
-from django.db import models, transaction, IntegrityError
-import requests
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta
 from decimal import Decimal
+
 import pandas as pd
-from .models import Transaction, Sale, InflationIndex, IndicativeExchangeRate
+import requests
 from django.conf import settings
+from django.db import IntegrityError, models, transaction
+
+from .models import IndicativeExchangeRate, InflationIndex, Sale, Transaction
 
 @transaction.atomic
 def execute_fifo_sale(asset, sell_qty, sell_px_foreign, s_date, s_kur, s_comm=0):

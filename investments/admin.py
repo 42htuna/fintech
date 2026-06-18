@@ -1,7 +1,9 @@
-from django.contrib import admin
-from .models import Asset, Transaction, Sale, InflationIndex, IndicativeExchangeRate
-from .utils import execute_fifo_sale
 from decimal import Decimal
+
+from django.contrib import admin
+
+from .models import Asset, IndicativeExchangeRate, InflationIndex, Sale, Transaction
+from .utils import execute_fifo_sale
 
 @admin.register(Asset)
 class AssetAdmin(admin.ModelAdmin):

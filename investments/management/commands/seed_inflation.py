@@ -1,6 +1,8 @@
-from django.core.management.base import BaseCommand
-from investments.models import InflationIndex
 from decimal import Decimal
+
+from django.core.management.base import BaseCommand
+
+from investments.models import InflationIndex
 
 class Command(BaseCommand):
     help = 'Yİ-ÜFE verilerini manuel olarak yükler.'

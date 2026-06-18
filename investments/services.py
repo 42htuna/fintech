@@ -1,9 +1,11 @@
-from decimal import Decimal, InvalidOperation
-from django.core.cache import cache
-from .models import InflationIndex
 from datetime import datetime
-import yfinance as yf
+from decimal import Decimal, InvalidOperation
+
+from django.core.cache import cache
 import requests
+import yfinance as yf
+
+from .models import InflationIndex
 
 custom_session = requests.Session()
 custom_session.headers.update({
