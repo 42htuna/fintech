@@ -183,7 +183,7 @@ gunicorn core.wsgi:application --bind 0.0.0.0:8000 --workers 3 --timeout 90
 ```
 
 ```bash
-waitress-serve --port=8000 --threads=16 --connection-limit=200 offermanager.wsgi:application
+waitress-serve --port=8000 --threads=16 --connection-limit=200 core.wsgi:application
 ```
 
 ⚠️ Not: Windows için en iyi alternatif Waitress'dir.
