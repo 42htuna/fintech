@@ -105,8 +105,7 @@ Projede **TCMB** kaynaklı döviz kurları ve **Yİ-ÜFE** enflasyon endeks veri
 
 | Komut | Parametreler | Açıklama |
 | :--- | :--- | :--- |
-| `python manage.py ekle` | `--kur`, `--file [yol]` | Tek bir çatı altından seçimli olarak kur veya endeks yüklemesi yapar. |
-| `python manage.py ekle` | `--endeks`, `--file [yol]` | Tek bir çatı altından seçimli olarak kur veya endeks yüklemesi yapar. |
+| `python manage.py ekle` | `--kur`, `--endeks`, `--file [yol]` | Tek bir çatı altından seçimli olarak kur veya endeks yüklemesi yapar. |
 | `python manage.py ekle_kur` | `--file [yol]` | Doğrudan döviz kuru verilerini (`bulk_create` ile) sisteme işler. |
 | `python manage.py ekle_endeks` | `--file [yol]` | Doğrudan Yİ-ÜFE enflasyon verilerini (`update_or_create` ile) sisteme işler. |
 | `python manage.py add_inflation`  |   `--file [yol]` | Yereldeki (tcmb_enflasyon_verileri.xlsx) dosyasındaki tüm geçmiş Yİ-ÜFE verilerini veritabanına topluca enjekte eder. |
