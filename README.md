@@ -105,14 +105,15 @@ Projede **TCMB** kaynaklı döviz kurları ve **Yİ-ÜFE** enflasyon endeks veri
 
 | Komut | Parametreler | Açıklama |
 | :--- | :--- | :--- |
-| `python manage.py ekle`   | `--kur`, `--endeks`, `--file [yol]`     | Tek bir çatı altından seçimli olarak kur veya endeks yüklemesi yapar. |
-| `python manage.py ekle_kur`   | `--file [yol]`  | Doğrudan döviz kuru verilerini (`bulk_create` ile) sisteme işler. |
-| `python manage.py ekle_endeks`    | `--file [yol]`   | Doğrudan Yİ-ÜFE enflasyon verilerini (`update_or_create` ile) sisteme işler. |
-| `python manage.py add_inflation`      |   `--file [yol]`  | Yereldeki (tcmb_enflasyon_verileri.xlsx) dosyasındaki tüm geçmiş Yİ-ÜFE verilerini veritabanına topluca enjekte eder. |
-| `python manage.py update_inflation_null`      |   `-`     | Yereldeki Excel dosyasından (tcmb_enflasyon_verileri.xlsx) boş veya eksik ayların Yİ-ÜFE verilerini günceller. |
-| `python manage.py update_inflation`   |   `-`  | TCMB EVDS API'sine bağlanarak canlı veri çekmeye çalışır. Kurumsal IP engeli veya geçersiz API anahtarı durumunda güvenlik gereği işlemi keser. |
-| `python manage.py add_forex`      |   `--file [yol]`  | Excel tablosundaki resmi TCMB kurlarını sisteme topluca enjekte eder. |
-| `python manage.py seed_inflation`     |   `-`    | Endeksi seed sözlüğünden manuel olarak sisteme topluca enjekte eder. |
+| `python manage.py ekle` | `--kur`, `--file [yol]` | Tek bir çatı altından seçimli olarak kur veya endeks yüklemesi yapar. |
+| `python manage.py ekle` | `--endeks`, `--file [yol]` | Tek bir çatı altından seçimli olarak kur veya endeks yüklemesi yapar. |
+| `python manage.py ekle_kur` | `--file [yol]` | Doğrudan döviz kuru verilerini (`bulk_create` ile) sisteme işler. |
+| `python manage.py ekle_endeks` | `--file [yol]` | Doğrudan Yİ-ÜFE enflasyon verilerini (`update_or_create` ile) sisteme işler. |
+| `python manage.py add_inflation`  |   `--file [yol]` | Yereldeki (tcmb_enflasyon_verileri.xlsx) dosyasındaki tüm geçmiş Yİ-ÜFE verilerini veritabanına topluca enjekte eder. |
+| `python manage.py update_inflation_null`  |   `-` | Yereldeki Excel dosyasından (tcmb_enflasyon_verileri.xlsx) boş veya eksik ayların Yİ-ÜFE verilerini günceller. |
+| `python manage.py update_inflation`  |   `-` | TCMB EVDS API'sine bağlanarak canlı veri çekmeye çalışır. Kurumsal IP engeli veya geçersiz API anahtarı durumunda güvenlik gereği işlemi keser. |
+| `python manage.py add_forex`  |   `--file [yol]` | Excel tablosundaki resmi TCMB kurlarını sisteme topluca enjekte eder. |
+| `python manage.py seed_inflation`  |   `-` | Endeksi seed sözlüğünden manuel olarak sisteme topluca enjekte eder. |
 
 #### 💡 Akıllı Dosya Kontrol (Fallback) Mekanizması
 
