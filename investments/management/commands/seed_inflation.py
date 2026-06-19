@@ -25,6 +25,7 @@ class Command(BaseCommand):
             (2026, 2, '5029.76'),
             (2026, 3, '5145.36'),
             (2026, 4, '5308.46'),
+            (2026, 5, '5454.58'),
         ]
 
         for year, month, val in data:

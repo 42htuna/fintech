@@ -1,12 +1,8 @@
-# 1. Grup: Standart kütüphaneler
-
-# 2. Grup: Üçüncü parti (Django)
 from django.conf import settings
 from django.contrib import admin
 from django.urls import path, re_path
 from django.views.generic.base import RedirectView
 
-# 3. Grup: Yerel uygulama modülleri
 from investments import views
 
 urlpatterns = [
