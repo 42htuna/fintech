@@ -4,7 +4,7 @@ Bu proje; **Borsa İstanbul (BIST)**, **Amerikan Borsaları (US)**, **Avrupa Bor
 
 ---
 
-## 🚀 Öne Çıkan Mühendislik ve Finans Özellikleri
+## 📌 Öne Çıkan Mühendislik ve Finans Özellikleri
 
 * **Gelişmiş FIFO (First-In, First-Out) Algoritması:** Satış işlemlerinde eldeki ilk alınan varlıklar kuruşu kuruşuna tespit edilerek eritilir. Kalan stoklar veritabanı seviyesinde atomik olarak yönetilir.
 
@@ -54,9 +54,9 @@ python-dotenv==1.2.2
 
 ---
 
-## Kurulum ve Yerel Geliştirme (Local Development)
+## ⚙️ Kurulum ve Yerel Geliştirme (Local Development)
 
-### 1. Sanal Ortamı Aktif Edin ve Bağımlılıkları Yükleyin
+### 🖥️ 1. Sanal Ortamı Aktif Edin ve Bağımlılıkları Yükleyin
 
 ```bash
 python -m venv .venv
@@ -65,7 +65,7 @@ source .venv/bin/activate  # Linux/Mac
 pip install -r requirements.txt
 ```
 
-### 2. Güvenlik Anahtarı (.env) Yapılandırması
+### 🔑 2. Güvenlik Anahtarı (.env) Yapılandırması
 
 Projenin kök dizininde (**settings.py**'nin görebileceği konumda) bir **.env** dosyası oluşturun. Terminalde taze bir anahtar üretip bu dosyaya ekleyin:
 
@@ -78,7 +78,7 @@ python -c "from django.core.management.utils import get_random_secret_key; print
 DJANGO_SECRET_KEY=urettiginiz_gizli_anahtar
 ```
 
-### 3. Veritabanı Göçleri ve Sunucuyu Başlatma
+### 🚀 3. Veritabanı Göçleri ve Sunucuyu Başlatma
 
 **migrations** dizini yoksa oluşturmak için:
 
@@ -122,7 +122,7 @@ Tüm komutlar hibrit bir dosya doğrulama mimarisine sahiptir:
 
 3. **Hiçbiri Yoksa:** Hata vermeden önce ilgili dizinde boş bir **JSON** şablonu oluşturarak kullanıcının veri girmesini kolaylaştırır.
 
-#### Örnek Kullanımlar
+#### 🌟 Örnek Kullanımlar
 
 ```bash
 # Akıllı komut ile enflasyon endekslerini yükleme (Varsayılan dosya üzerinden)
@@ -174,7 +174,7 @@ python manage.py flush
 ### 6. 🌐 Üretim Ortamı Dağıtımı (Production Deployment)
 Uygulama canlıya alınırken **settings.py** içinde **DEBUG = False** set edilmeli ve dış dünyaya asla Django'nun çekirdek runserver motoruyla açılmamalıdır.
 
-**Yerelde test için runserver kullanımı**
+**❗ Yerelde test için runserver kullanımı**
 
 ```bash
 python manage.py runserver 0.0.0.0:8000
@@ -184,13 +184,13 @@ python manage.py runserver 0.0.0.0:8000
 python manage.py runserver 0.0.0.0:8000 --insecure
 ```
 
-**Adım 1: Statik Dosyaları Derleyin**
+**✨ Adım 1: Statik Dosyaları Derleyin**
 
 ```bash
 python manage.py collectstatic --noinput
 ```
 
-**Adım 2: Gunicorn/Waitress Sunucusunu Başlatın**
+**✨ Adım 2: Gunicorn/Waitress Sunucusunu Başlatın**
 
 Dış API **(Yahoo Finance, TCMB)** isteklerindeki olası gecikmeler ve kilitlenmelerin **(Worker Timeout)** önüne geçmek amacıyla eş zamanlı işçiler ve arttırılmış zaman aşımı süresi **($t = 90\text{ sn}$)** ile başlatılması zorunludur:
 
