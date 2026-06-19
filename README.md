@@ -222,12 +222,6 @@ POST isteğinin oluşturacağı veri yükünü artırmak için **(1 MB limit)** 
 waitress-serve --port=8000 --threads=16 --connection-limit=200 --max-request-header-size=1048576 core.wsgi:application
 ```
 
-Karakter Limiti artırmak için (Varsayılan limit 1000'dir.):
-
-```bash
-waitress-serve --port=8000 --threads=16 --connection-limit=200 --max-request-header-size=1048576 --max-fields=5000 core.wsgi:application
-```
-
 ⚠️ **Not:** Windows için en iyi alternatif **Waitress**'dir.
 
 ---
