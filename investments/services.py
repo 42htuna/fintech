@@ -65,7 +65,7 @@ def get_live_data(symbol, asset_type, currency):
 
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    print(f"[{timestamp}] [DEBUG] Fetching: {symbol} -> Ticker: {ticker_sym} (Asset: {asset_type})")    
+    print(f"[{timestamp}] [DEBUG] Fetching: {symbol} -> Ticker: {ticker_sym} (Asset: {asset_type})", flush=True)    
     
     try:
         ticker = yf.Ticker(ticker_sym)
