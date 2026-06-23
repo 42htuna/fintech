@@ -143,7 +143,7 @@
                         <td>₺{{ item.vergi_kalkani|floatformat:2 }}</td>
                         <td>₺{{ item.guncel_deger|floatformat:2 }}</td>
                         <td class="{% if item.kar_zarar >= 0 %}text-profit{% else %}text-loss{% endif %}">₺{{ item.kar_zarar|floatformat:2 }}</td>
-                        <td class="fw-bold {% if item.reel_kar >= 0 %}text-profit{% else %}text-loss{% endif %}">{{ item.reel_kar|floatformat:2 }}</td>                                                
+                        <td class="fw-bold {% if item.reel_kar >= 0 %}text-profit{% else %}text-loss{% endif %}">₺{{ item.reel_kar|floatformat:2 }}</td>                                                
                         <td class="fw-bold {% if item.performans >= 0 %}text-profit{% else %}text-loss{% endif %}">
                             {% if item.performans >= 0 %}
                                 <span class="badge bg-success-subtle text-success">▲ %{{ item.performans|floatformat:2 }}</span>
@@ -189,7 +189,7 @@
                         <td>₺{{ item.vergi_kalkani|floatformat:2 }}</td>
                         <td>₺{{ item.guncel_deger|floatformat:2 }}</td>
                         <td class="{% if item.kar_zarar >= 0 %}text-profit{% else %}text-loss{% endif %}">₺{{ item.kar_zarar|floatformat:2 }}</td>
-                        <td class="fw-bold {% if item.reel_kar >= 0 %}text-profit{% else %}text-loss{% endif %}">{{ item.reel_kar|floatformat:2 }}</td>                                        
+                        <td class="fw-bold {% if item.reel_kar >= 0 %}text-profit{% else %}text-loss{% endif %}">₺{{ item.reel_kar|floatformat:2 }}</td>                                        
                         <td>
                             {% if item.performans >= 0 %}
                                 <span class="badge bg-success-subtle text-success">HODL ▲ %{{ item.performans|floatformat:2 }}</span>
