@@ -6,7 +6,7 @@ psycopg2-binary==2.9.12
 
 # Veri Analizi ve Excel Entegrasyonları
 pandas==3.0.3
-numpy==2.4.6
+numpy==2.5.0
 openpyxl==3.1.5
 
 # Canlı Finansal Veri ve Kur Servisleri
