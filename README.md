@@ -35,7 +35,7 @@ numpy==2.5.0
 openpyxl==3.1.5
 
 # Canlı Finansal Veri ve Kur Servisleri
-yfinance==1.4.1
+yfinance==1.5.1
 requests==2.34.2
 python-dateutil==2.9.0.post0
 
