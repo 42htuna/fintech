@@ -95,7 +95,7 @@ class Transaction(models.Model):
         
         elif self.transaction_type == 'SELL':
             self.remaining_quantity = 0
-                
+
         super().save(*args, **kwargs)
 
     @property
