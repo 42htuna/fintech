@@ -72,26 +72,31 @@ class Transaction(models.Model):
         return Decimal('1.0000')
 
     def save(self, *args, **kwargs):
-            if self.asset.asset_type == 'BIST':
-                self.exchange_rate = Decimal('1.0000')
+        if self.asset.asset_type == 'BIST':
+            self.exchange_rate = Decimal('1.0000')
+        else:
+            if self.exchange_rate in [Decimal('1.0000'), Decimal('0'), None]:
+                self.exchange_rate = self.get_suggested_rate(self.asset, self.date)
+
+        if self.yi_ufe_index is None:
+            from dateutil.relativedelta import relativedelta
+            m1_date = self.date - relativedelta(months=1)
+            idx_obj = InflationIndex.objects.filter(year=m1_date.year, month=m1_date.month).first()
+            if idx_obj:
+                self.yi_ufe_index = idx_obj.value
+
+        if self.transaction_type == 'BUY':
+            if self.pk:
+                original = Transaction.objects.filter(pk=self.pk).values('amount').first()
+                if original and original['amount'] != self.amount:
+                     self.remaining_quantity = self.amount
             else:
-                if self.exchange_rate == Decimal('1.0000') or self.exchange_rate == 0 or self.exchange_rate is None:
-                    self.exchange_rate = self.get_suggested_rate(self.asset, self.date)        
-
-            if self.yi_ufe_index is None:
-                from dateutil.relativedelta import relativedelta
-                m1_date = self.date - relativedelta(months=1)
-                idx_obj = InflationIndex.objects.filter(year=m1_date.year, month=m1_date.month).first()
-                if idx_obj:
-                    self.yi_ufe_index = idx_obj.value
-
-            if not self.pk and self.transaction_type == 'BUY':
                 self.remaining_quantity = self.amount
-            
-            if self.transaction_type == 'SELL':
-                self.remaining_quantity = 0
-
-            super().save(*args, **kwargs)
+        
+        elif self.transaction_type == 'SELL':
+            self.remaining_quantity = 0
+                
+        super().save(*args, **kwargs)
 
     @property
     def symbol(self):
