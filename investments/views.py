@@ -122,9 +122,52 @@ def portfolio_dashboard(request):
         else:
             hisse_listesi.append(item)
 
+    if hisse_listesi:
+        hisse_toplam = {
+            'symbol': 'TOPLAM',
+            'name': 'Hisse Alt Toplamı',
+            'asset_type': '',
+            'qty': '',
+            'ham_maliyet': sum(i['ham_maliyet'] for i in hisse_listesi),
+            'price': Decimal('0.00'),
+            'para_birimi': 'TRY',
+            'guncel_fiyat': Decimal('0.00'),
+            'guncel_deger': sum(i['guncel_deger'] for i in hisse_listesi),
+            'kar_zarar': sum(i['kar_zarar'] for i in hisse_listesi),
+            'vergi_kalkani': sum(i['vergi_kalkani'] for i in hisse_listesi),
+            'reel_kar': sum(i['reel_kar'] for i in hisse_listesi),
+        }
+
+        hisse_toplam['performans'] = (
+            ((hisse_toplam['guncel_deger'] / hisse_toplam['ham_maliyet']) - 1) * 100
+            if hisse_toplam['ham_maliyet'] > 0 else Decimal("0")
+        )
+        hisse_listesi.append(hisse_toplam)
+
+    if kripto_listesi:
+        kripto_toplam = {
+            'symbol': 'TOPLAM',
+            'name': 'Kripto Alt Toplamı',
+            'asset_type': '',
+            'qty': '',
+            'ham_maliyet': sum(i['ham_maliyet'] for i in kripto_listesi),
+            'price': Decimal('0.00'),
+            'para_birimi': '',
+            'guncel_fiyat': Decimal('0.00'),
+            'guncel_deger': sum(i['guncel_deger'] for i in kripto_listesi),
+            'kar_zarar': sum(i['kar_zarar'] for i in kripto_listesi),
+            'vergi_kalkani': sum(i['vergi_kalkani'] for i in kripto_listesi),
+            'reel_kar': sum(i['reel_kar'] for i in kripto_listesi),
+        }
+        kripto_toplam['performans'] = (
+            ((kripto_toplam['guncel_deger'] / kripto_toplam['ham_maliyet']) - 1) * 100
+            if kripto_toplam['ham_maliyet'] > 0 else Decimal("0")
+        )
+        kripto_listesi.append(kripto_toplam)
+
     all_items = hisse_listesi + kripto_listesi
-    labels = [i['symbol'] for i in all_items]
-    values = [float(i.get('guncel_deger') or 0) for i in all_items]
+    labels = [i['symbol'] for i in all_items if i['symbol'] != 'TOPLAM'] 
+    values = [float(i.get('guncel_deger') or 0) for i in all_items if i['symbol'] != 'TOPLAM']
 
     sales_data_queryset = Sale.objects.all().select_related('asset').order_by('sale_date')
 
