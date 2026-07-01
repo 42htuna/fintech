@@ -10,7 +10,7 @@ from django.db import IntegrityError, models, transaction
 from .models import IndicativeExchangeRate, InflationIndex, Sale, Transaction
 
 @transaction.atomic
-def execute_fifo_sale(asset, sell_qty, sell_px_foreign, s_date, s_kur, s_comm=0):
+def execute_fifo_sale(sell_transaction, asset, sell_qty, sell_px_foreign, s_date, s_kur, s_comm=0):
     sell_qty = Decimal(str(sell_qty))
     
     total_available = Transaction.objects.filter(
@@ -57,6 +57,7 @@ def execute_fifo_sale(asset, sell_qty, sell_px_foreign, s_date, s_kur, s_comm=0)
 
         try:
             Sale.objects.create(
+                transaction=sell_transaction,
                 asset=asset,
                 sale_date=s_date,
                 quantity=take,
@@ -69,7 +70,6 @@ def execute_fifo_sale(asset, sell_qty, sell_px_foreign, s_date, s_kur, s_comm=0)
         except IntegrityError as e:
             raise ValueError(f"Mükerrer Satış kaydı engellendi: {e}")
 
-        # 3. Stoktan düş
         p.remaining_quantity = max(Decimal('0'), p.remaining_quantity - take)
         p.save(update_fields=['remaining_quantity'])
         rem -= take

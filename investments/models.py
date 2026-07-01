@@ -34,7 +34,7 @@ class Asset(models.Model):
     def __str__(self):
         return f"{self.symbol} - {self.name} - ({self.asset_type})"    
 
-class Transaction(models.Model):
+class Transaction(models.Model): 
 
     class Meta:
         verbose_name = "transaksiyon"
@@ -111,6 +111,14 @@ class Transaction(models.Model):
         return f"{self.date.strftime('%d.%m.%Y')} - {self.asset.symbol} ({self.amount} Adet)"        
 
 class Sale(models.Model):
+
+    transaction = models.ForeignKey(
+        'Transaction', 
+        on_delete=models.CASCADE, 
+        related_name='sale_details',
+        null=True, 
+        blank=True
+    )
 	
     """Excel Çıktısı ve Beyan Arşivi"""
     asset = models.ForeignKey(Asset, on_delete=models.CASCADE)

@@ -19,35 +19,28 @@ class TransactionAdmin(admin.ModelAdmin):
     exclude = ('remaining_quantity',)
     
     def save_model(self, request, obj, form, change):
-            from decimal import Decimal
+        if obj.asset.asset_type == 'BIST':
+            obj.exchange_rate = Decimal('1.0000')
+        else:
+            if obj.exchange_rate in [Decimal('1.0000'), Decimal('0'), None]:
+                obj.exchange_rate = obj.get_suggested_rate(obj.asset, obj.date)
 
-            if not change and obj.transaction_type == 'SELL':
-                if obj.asset.asset_type == 'BIST':
-                    obj.exchange_rate = Decimal('1.0000')
-                else:
-                    if obj.exchange_rate == Decimal('1.0000') or obj.exchange_rate == 0 or obj.exchange_rate is None:
-                        obj.exchange_rate = obj.get_suggested_rate(obj.asset, obj.date)
+        super().save_model(request, obj, form, change)
 
-                try:
-                    from .utils import execute_fifo_sale
-                    execute_fifo_sale(
-                        asset=obj.asset,
-                        sell_qty=obj.amount,
-                        sell_px_foreign=obj.price_foreign,
-                        s_date=obj.date,
-                        s_kur=obj.exchange_rate,
-                        s_comm=obj.commission_foreign
-                    )
-                    super().save_model(request, obj, form, change)
-                except Exception as e:
-                    messages.error(request, f"Hata: {str(e)}")
-            else:
-                if obj.asset.asset_type == 'BIST':
-                    obj.exchange_rate = Decimal('1.0000')
-                else:
-                    if obj.exchange_rate == Decimal('1.0000') or obj.exchange_rate == 0 or obj.exchange_rate is None:
-                        obj.exchange_rate = obj.get_suggested_rate(obj.asset, obj.date)
-                super().save_model(request, obj, form, change)
+        if not change and obj.transaction_type == 'SELL':
+            try:
+                execute_fifo_sale(
+                    sell_transaction=obj,
+                    asset=obj.asset,
+                    sell_qty=obj.amount,
+                    sell_px_foreign=obj.price_foreign,
+                    s_date=obj.date,
+                    s_kur=obj.exchange_rate,
+                    s_comm=obj.commission_foreign
+                )
+            except Exception as e:
+                obj.delete()
+                messages.error(request, f"Hata: {str(e)} - Satış işlemi iptal edildi.")
 
     @admin.display(description='Kalan Stok')
     def display_remaining(self, obj):
@@ -63,13 +56,27 @@ class SaleAdmin(admin.ModelAdmin):
     def has_add_permission(self, request): return False
     def has_change_permission(self, request, obj=None): return False
     def has_delete_permission(self, request, obj=None): return False
+       
+    def delete_model(self, request, obj):
+        if obj.transaction:
+            obj.transaction.delete()
+        else:
+            super().delete_model(request, obj)
+
+    def delete_queryset(self, request, queryset):
+        transaction_ids = queryset.values_list('transaction_id', flat=True).exclude(transaction_id__isnull=True)
+        Transaction.objects.filter(id__in=transaction_ids).delete()
+        queryset.filter(transaction_id__isnull=True).delete()        
 
     actions = ['force_delete_action']
-
+    
     @admin.action(description="Seçili satışları ZORLA SİL")
     def force_delete_action(self, request, queryset):
-        deleted_count, _ = queryset.delete()
-        self.message_user(request, f"{deleted_count} adet satış kaydı mühürlü olmasına rağmen silindi.", messages.WARNING)
+        count = queryset.count()
+        transaction_ids = queryset.values_list('transaction_id', flat=True).exclude(transaction_id__isnull=True)
+        Transaction.objects.filter(id__in=transaction_ids).delete()
+        queryset.filter(transaction_id__isnull=True).delete()
+        self.message_user(request, f"{count} adet satış kaydı ve bunlara bağlı ana işlemler mühürlü olmasına rağmen zorla silindi.", messages.WARNING)
 
 @admin.register(InflationIndex)
 class InflationIndexAdmin(admin.ModelAdmin):
