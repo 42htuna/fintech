@@ -34,7 +34,7 @@ class Asset(models.Model):
     def __str__(self):
         return f"{self.symbol} - {self.name} - ({self.asset_type})"    
 
-class Transaction(models.Model): 
+class Transaction(models.Model):
 
     class Meta:
         verbose_name = "transaksiyon"
