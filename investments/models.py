@@ -49,8 +49,8 @@ class Transaction(models.Model):
     transaction_type = models.CharField(max_length=4, choices=TRANSACTION_TYPES, verbose_name="İşlem Türü")
 
     amount = models.DecimalField(max_digits=18, decimal_places=8, verbose_name="Adet")
-    price_foreign = models.DecimalField(max_digits=18, decimal_places=2, verbose_name="Birim Fiyat (Döviz/TL)")
-    commission_foreign = models.DecimalField(max_digits=18, decimal_places=2, default=0, verbose_name="Komisyon (Döviz/TL)")
+    price_foreign = models.DecimalField(max_digits=18, decimal_places=4, verbose_name="Birim Fiyat (Döviz/TL)")
+    commission_foreign = models.DecimalField(max_digits=18, decimal_places=4, default=0, verbose_name="Komisyon (Döviz/TL)")
 
     exchange_rate = models.DecimalField(max_digits=18, decimal_places=4, null=True, blank=True, default=1.0, verbose_name="Kur")
     yi_ufe_index = models.DecimalField(max_digits=18, decimal_places=2, null=True, blank=True, verbose_name="Yİ-ÜFE")

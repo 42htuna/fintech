@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from django.contrib import admin
+from django.contrib import admin, messages
 
 from .models import Asset, IndicativeExchangeRate, InflationIndex, Sale, Transaction
 from .utils import execute_fifo_sale
@@ -40,7 +40,6 @@ class TransactionAdmin(admin.ModelAdmin):
                     )
                     super().save_model(request, obj, form, change)
                 except Exception as e:
-                    from django.contrib import messages
                     messages.error(request, f"Hata: {str(e)}")
             else:
                 if obj.asset.asset_type == 'BIST':
@@ -59,10 +58,18 @@ class TransactionAdmin(admin.ModelAdmin):
 @admin.register(Sale)
 class SaleAdmin(admin.ModelAdmin):
     list_display = ('asset', 'sale_date', 'quantity', 'sale_price_foreign', 'sale_exchange_rate')
-
+    list_filter = ('asset', 'sale_date',)
+    
     def has_add_permission(self, request): return False
     def has_change_permission(self, request, obj=None): return False
     def has_delete_permission(self, request, obj=None): return False
+
+    actions = ['force_delete_action']
+
+    @admin.action(description="Seçili satışları ZORLA SİL")
+    def force_delete_action(self, request, queryset):
+        deleted_count, _ = queryset.delete()
+        self.message_user(request, f"{deleted_count} adet satış kaydı mühürlü olmasına rağmen silindi.", messages.WARNING)
 
 @admin.register(InflationIndex)
 class InflationIndexAdmin(admin.ModelAdmin):
