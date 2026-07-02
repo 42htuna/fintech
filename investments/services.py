@@ -32,6 +32,7 @@ SYMBOL_OVERRIDES = {
     'VUAA': 'VUAA.L',
     'MEUD': 'MEUD.MI',
     'ASML': 'ASML.AS',
+    "SUI": "SUI20947-USD",
 }
 
 def calculate_real_cost(transaction):
@@ -51,7 +52,7 @@ def get_live_data(symbol, asset_type, currency):
     if "." in symbol:
         ticker_sym = symbol
     elif symbol in SYMBOL_OVERRIDES:
-        ticker_sym = SYMBOL_OVERRIDES[symbol]   
+        ticker_sym = SYMBOL_OVERRIDES[symbol]
     elif asset_type == "EU":
         ticker_sym = f"{symbol}.{EU_HINTS.get(symbol, 'AS')}"     
     elif asset_type == 'BIST':
