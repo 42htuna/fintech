@@ -126,8 +126,8 @@ def portfolio_dashboard(request):
         hisse_toplam = {
             'symbol': 'TOPLAM',
             'name': 'Hisse Alt Toplamı',
-            'asset_type': '',
-            'qty': '',
+            'asset_type': 'Hisse Portföyü',
+            'qty': Decimal('0.00'),
             'ham_maliyet': sum(i['ham_maliyet'] for i in hisse_listesi),
             'price': Decimal('0.00'),
             'para_birimi': 'TRY',
@@ -148,8 +148,8 @@ def portfolio_dashboard(request):
         kripto_toplam = {
             'symbol': 'TOPLAM',
             'name': 'Kripto Alt Toplamı',
-            'asset_type': '',
-            'qty': '',
+            'asset_type': 'Kripto Portföyü',
+            'qty': Decimal('0.00'),
             'ham_maliyet': sum(i['ham_maliyet'] for i in kripto_listesi),
             'price': Decimal('0.00'),
             'para_birimi': '',
@@ -212,13 +212,23 @@ def portfolio_dashboard(request):
                     buy_index = clean_decimal(p[4], "1.00")
 
             cost = ((qty * buy_price) + buy_commission) * buy_fx
+            
+            nominal_fark = sale_tl - cost
+            
+            if nominal_fark > 0:
+                sale_index_val = Decimal(str(s.sale_index)) if s.sale_index else system_latest_index
+                multiplier = sale_index_val / buy_index if buy_index > 0 else Decimal('1.00')
+                multiplier = multiplier if multiplier >= Decimal('1.10') else Decimal('1.00')
 
-            multiplier = system_latest_index / buy_index if buy_index > 0 else Decimal('1.00')
-            multiplier = multiplier if multiplier >= Decimal('1.10') else Decimal('1.00')
-
-            indexed_cost = cost * multiplier
-            net = sale_tl - indexed_cost
-
+                indexed_cost = cost * multiplier
+                net = sale_tl - indexed_cost
+                
+                gecerli_reel_kar = net if net > 0 else Decimal('0.00')
+            else:
+                indexed_cost = cost 
+                gecerli_reel_kar = nominal_fark # Negatif değeri koruyoruz
+                net = nominal_fark
+                
             final_sales_list.append({
                 'db_date': s.sale_date,
                 'db_asset_symbol': s.asset.symbol,
@@ -226,12 +236,11 @@ def portfolio_dashboard(request):
                 'calc_purchase_value': float(cost),
                 'calc_indexed_purchase': float(indexed_cost),
                 'calc_sale_value': float(sale_tl),
-                'calc_net_profit': float(net),
+                'calc_net_profit': float(gecerli_reel_kar),
             })
 
             if s.sale_date:
                 date_str = s.sale_date.strftime('%d-%m-%Y')
-                gecerli_reel_kar = net if net > 0 else Decimal('0.00')
                 
                 if date_str not in daily_profits:
                     daily_profits[date_str] = Decimal('0.00')
@@ -259,6 +268,7 @@ def portfolio_dashboard(request):
     cum_kar = Decimal('0.00')
     
     distinct_dates = []
+    
     for s in sales_data_queryset:
         if s.sale_date:
             d_str = s.sale_date.strftime('%d-%m-%Y')
@@ -282,11 +292,11 @@ def portfolio_dashboard(request):
         sales_toplam = {
             'db_date': None,
             'db_asset_symbol': 'TOPLAM',
-            'db_quantity': sum(i['db_quantity'] for i in final_sales_list),
+            'db_quantity': Decimal('0.00'),
             'calc_purchase_value': sum(i['calc_purchase_value'] for i in final_sales_list),
             'calc_indexed_purchase': sum(i['calc_indexed_purchase'] for i in final_sales_list),
             'calc_sale_value': sum(i['calc_sale_value'] for i in final_sales_list),
-            'calc_net_profit': sum(i['calc_net_profit'] if i['calc_net_profit'] > 0 else 0.0 for i in final_sales_list),
+            'calc_net_profit': sum(i['calc_net_profit'] for i in final_sales_list),
         }
         final_sales_list.append(sales_toplam)            
 
@@ -407,18 +417,26 @@ def export_sales_csv(request):
                 buy_index = clean_decimal(p[4], "1.00")
 
         cost = ((qty * buy_price) + buy_commission) * buy_fx
-        multiplier = system_latest_index / buy_index if buy_index > 0 else Decimal('1.00')
-        multiplier = multiplier if multiplier >= Decimal('1.10') else Decimal('1.00')
+        
+        nominal_fark = sale_tl - cost
+        
+        if nominal_fark > 0:
+            sale_index_val = Decimal(str(s.sale_index)) if s.sale_index else system_latest_index
+            multiplier = sale_index_val / buy_index if buy_index > 0 else Decimal('1.00')
+            multiplier = multiplier if multiplier >= Decimal('1.10') else Decimal('1.00')
 
-        indexed_cost = cost * multiplier
-        net = sale_tl - indexed_cost
+            indexed_cost = cost * multiplier
+            hesaplanan_net = sale_tl - indexed_cost
 
+            net = hesaplanan_net if hesaplanan_net > 0 else Decimal('0.00')
+        else:
+            indexed_cost = cost
+            net = nominal_fark
+            
         total_cost_tl += cost
         total_indexed_cost_tl += indexed_cost
         total_sale_tl += sale_tl
-        
-        if net > 0:
-            total_net_profit_tl += net
+        total_net_profit_tl += net
 
         writer.writerow([
             total_rows_written,
@@ -439,8 +457,7 @@ def export_sales_csv(request):
 
     if total_rows_written > 0:
         writer.writerow([
-            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'TOPLAM', 
-
+            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'TOPLAM',
             float(total_cost_tl),
             float(total_indexed_cost_tl),
             float(total_sale_tl),
