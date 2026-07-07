@@ -24,7 +24,7 @@ Proje, **Python 3.13** ortamında tam kararlılıkla çalışacak şekilde yapı
 
 ```text
 # Temel Geliştirme Framework'ü
-Django==6.0.6
+Django==6.0.7
 
 # Veritabanı Sürücüsü (PostgreSQL)
 psycopg2-binary==2.9.12

@@ -1,5 +1,5 @@
 # Temel Geliştirme Framework'ü
-Django==6.0.6
+Django==6.0.7
 
 # Veritabanı Sürücüsü (PostgreSQL)
 psycopg2-binary==2.9.12
