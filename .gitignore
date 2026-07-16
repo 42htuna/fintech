@@ -7,3 +7,4 @@ staticfiles/
 data/
 database_backup.json
 *.json
+.idea/

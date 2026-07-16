@@ -1,0 +1,14 @@
+services:
+  fintech-service:
+    image: fintech:latest
+    container_name: fintech
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8080:8000"
+    volumes:
+      - fintech:/opt/fintech/data
+
+volumes:
+  fintech:
+    name: fintech

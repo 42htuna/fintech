@@ -224,6 +224,18 @@ waitress-serve --port=8000 --threads=16 --connection-limit=200 --max-request-hea
 
 ⚠️ **Not:** Windows için en iyi alternatif **Waitress**'dir.
 
+Dokerize yapmak için:
+
+```bash
+docker compose up --build -d
+```
+
+Hazırda imaj varsa:
+
+```bash
+docker compose up -d
+```
+
 ---
 
 ## 🔭 Proje Görünümü
