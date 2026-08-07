@@ -1,16 +1,16 @@
 # Temel Geliştirme Framework'ü
-Django==6.0.7
+Django==6.1
 
 # Veritabanı Sürücüsü (PostgreSQL)
 psycopg2-binary==2.9.12
 
 # Veri Analizi ve Excel Entegrasyonları
-pandas==3.0.4
+pandas==3.0.5
 numpy==2.5.1
 openpyxl==3.1.5
 
 # Canlı Finansal Veri ve Kur Servisleri
-yfinance==1.5.1
+yfinance==1.5.2
 requests==2.34.2
 python-dateutil==2.9.0.post0
 
