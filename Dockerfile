@@ -22,7 +22,7 @@ ENV PATH="$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH"
 RUN curl https://pyenv.run | bash
 
 # 3. İstediğiniz Python sürümünü pyenv ile indirin ve derleyin
-ENV PYTHON_VERSION=3.14.6
+ENV PYTHON_VERSION=3.14.7
 RUN pyenv install $PYTHON_VERSION && \
     pyenv global $PYTHON_VERSION
 
@@ -39,7 +39,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Projenin geri kalanını kopyalayın
 COPY . .
 
-# Django komutları artık pyenv'in ayağa kaldırdığı Python 3.14.6 ile çalışır
+# Django komutları artık pyenv'in ayağa kaldırdığı Python 3.14.7 ile çalışır
 RUN python manage.py collectstatic --noinput
 RUN python manage.py makemigrations investments
 RUN python manage.py makemigrations
