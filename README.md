@@ -24,24 +24,24 @@ Proje, **Python 3.13** ortamında tam kararlılıkla çalışacak şekilde yapı
 
 ```text
 # Temel Geliştirme Framework'ü
-Django==6.1
+Django==6.1.2
 
 # Veritabanı Sürücüsü (PostgreSQL)
-psycopg2-binary==2.9.12
+psycopg2-binary==2.9.13
 
 # Veri Analizi ve Excel Entegrasyonları
-pandas==3.0.5
-numpy==2.5.2
+pandas==3.0.6
+numpy==2.5.4
 openpyxl==3.1.5
 
 # Canlı Finansal Veri ve Kur Servisleri
-yfinance==1.6.0
+yfinance==1.7.0
 requests==2.34.2
 python-dateutil==2.9.0.post0
 
 # Üretim (Production) Ortamı Araçları
 waitress==3.0.2
-gunicorn==26.0.0
+gunicorn==26.2.0
 whitenoise==6.12.0
 
 # Yardımcı Metin ve SQL Düzenleyiciler
@@ -49,7 +49,7 @@ sqlparse==0.6.0
 asgiref==3.12.1
 
 # Çevre Değişkenleri ve Yapılandırma Yönetimi
-python-dotenv==1.2.2
+python-dotenv==1.2.4
 ```
 
 ---
